@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.5s;
+            flex-direction: column; /* Added for better centering */
+        }
+
+        /* Header Styles */
+        header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            opacity: 0; /* Initially hidden */
+            animation: fadeIn 2s forwards; /* Animation to fade in */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        body.light-mode {
+            background-color: #eee;
+            color: #333;
+        }
+
+        body.dark-mode {
+            background-color: #111;
+            color: #fff;
+        }
+
+        #calculator {
+            background-color: #fff;
+            border: 1px solid #00f;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            transition: background-color 0.5s, box-shadow 0.5s;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border: 1px solid #00f;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+            text-align: right;
+            outline: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        button {
+            width: 48px;
+            height: 48px;
+            font-size: 18px;
+            margin: 5px;
+            cursor: pointer;
+            border: 1px solid #00f;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            color: #333;
+            transition: transform 0.5s, opacity 0.5s, background-color 0.5s, color 0.5s, outline-color 0.5s;
+        }
+
+        #equals {
+            width: 100%;
+        }
+
+        #themeToggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            margin-top: 10px;
+            transition: transform 0.5s;
+        }
+
+        #themeToggle.light-mode::before,
+        #themeToggle.dark-mode::before {
+            display: inline-block;
+            transition: transform 0.5s;
+        }
+
+        #themeToggle.light-mode::before {
+            content: '\2600';
+        }
+
+        #themeToggle.dark-mode::before {
+            content: '\1F311';
+            transform: rotate(0deg);
+            color: #fff;
+        }
+
+        body.dark-mode #calculator {
+            background-color: #333;
+            box-shadow: 0 0 10px rgba(83, 232, 212, 0.7);
+        }
+
+        body.dark-mode input {
+            background-color: #444;
+            color: #00ff00;
+            border-color: #00ff00;
+        }
+
+        body.dark-mode button {
+            background-color: #555;
+            color: #00ff00;
+            border-color: #00ff00;
+        }
+
+        body.dark-mode button:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        /* History Panel Styles */
+        #historyPanel {
+            width: 100%;
+            max-width: 400px; /* Adjust the max-width as needed */
+            background-color: #f9f9f9;
+            border: 1px solid #00f;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            margin-top: 20px;
+            display: none; /* Initially hidden */
+            transition: display 0.5s;
+        }
+
+        #historyList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #historyList li {
+            margin-bottom: 10px;
+        }
+
+        #historyList li button {
+            background-color: #f00;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.5s;
+        }
+
+        #historyList li button:hover {
+            background-color: #800;
+        }
+
+        #minimizeHistory {
+            background-color: #00f;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.5s;
+        }
+
+        #minimizeHistory:hover {
+            background-color: #008;
+        }
+
+        /* Add media query for responsiveness */
+        @media screen and (max-width: 600px) {
+            #calculator {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode" onkeypress="handleKeyPress(event)">
+    <!-- Header Section -->
+    <header>
+        Calculator
+    </header>
+
+    <!-- Calculator Section -->
+    <div id="calculator">
+        <input type="text" id="display" readonly>
+        <br>
+        <button onclick="appendToDisplay('7')">7</button>
+        <button onclick="appendToDisplay('8')">8</button>
+        <button onclick="appendToDisplay('9')">9</button>
+        <button onclick="appendToDisplay('/')">/</button>
+        <br>
+        <button onclick="appendToDisplay('4')">4</button>
+        <button onclick="appendToDisplay('5')">5</button>
+        <button onclick="appendToDisplay('6')">6</button>
+        <button onclick="appendToDisplay('*')">*</button>
+        <br>
+        <button onclick="appendToDisplay('1')">1</button>
+        <button onclick="appendToDisplay('2')">2</button>
+        <button onclick="appendToDisplay('3')">3</button>
+        <button onclick="appendToDisplay('-')">-</button>
+        <br>
+        <button onclick="appendToDisplay('0')">0</button>
+        <button onclick="appendToDisplay('.')">.</button>
+        <button onclick="clearDisplay()">C</button>
+        <button id="equals" onclick="calculate()">=</button>
+        <button id="themeToggle" onclick="toggleTheme()" class="light-mode"></button>
+    </div>
+
+    <!-- History Panel Section -->
+    <div id="historyPanel">
+        <h2>History</h2>
+        <ul id="historyList">
+            <!-- History items will be dynamically added here -->
+        </ul>
+        <button id="minimizeHistory" onclick="toggleHistoryPanel()">Minimize</button>
+    </div>
+
+    <!-- JavaScript and additional content... -->
+    <script>
+        function appendToDisplay(value) {
+            document.getElementById('display').value += value;
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+        }
+
+        function calculate() {
+            try {
+                const result = eval(document.getElementById('display').value);
+                document.getElementById('display').value = result;
+                addToHistory(result);
+            } catch (error) {
+                document.getElementById('display').value = 'Error';
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                themeToggle.style.transform = 'rotate(0deg)';
+            }, 500);
+        }
+
+        function handleKeyPress(event) {
+            const key = event.key;
+            if (key.match(/[0-9+\-*/.=]|Enter/)) {
+                event.preventDefault();
+                if (key === 'Enter') {
+                    calculate();
+                } else {
+                    appendToDisplay(key);
+                }
+            }
+        }
+
+        /* History Panel Functions */
+        function addToHistory(result) {
+            const historyList = document.getElementById('historyList');
+            const li = document.createElement('li');
+            li.innerHTML = `${document.getElementById('display').value} = ${result} <button onclick="removeFromHistory(this)">Remove</button>`;
+            historyList.appendChild(li);
+        }
+
+        function removeFromHistory(button) {
+            const li = button.parentNode;
+            li.parentNode.removeChild(li);
+        }
+
+        function toggleHistoryPanel() {
+            const historyPanel = document.getElementById('historyPanel');
+            historyPanel.style.display = (historyPanel.style.display === 'none' || historyPanel.style.display === '') ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
